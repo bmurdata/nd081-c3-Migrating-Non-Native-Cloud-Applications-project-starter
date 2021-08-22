@@ -61,11 +61,24 @@ You will need to install the following locally:
 ## Monthly Cost Analysis
 Complete a month cost analysis of each Azure resource to give an estimate total cost using the table below:
 
-| Azure Resource | Service Tier | Monthly Cost |
-| ------------ | ------------ | ------------ |
-| *Azure Postgres Database* |     |              |
-| *Azure Service Bus*   |         |              |
-| ...                   |         |              |
+| Azure Resource | Service Tier | Monthly Cost Estimates(USD $) | Reasoning|
+| ------------ | ------------ | ------------ | ------------ |
+| *Azure Postgres Database* |Basic, 1vCore, 5GB     |   25.32           | Database not large, keep costs small to start out  |
+| *Azure Service Bus*   |  Basic       |     0.05 per million per month         | Topics not required, messages size not expected to exceed 256KB |
+| *Azure App Service Plan*                   | Free F1        |     Free         | Free tier to test application, before upgrading to Basic B1 or greater as needs grow |
+| *Azure Function App*                   | Consumption Serverless        |              | Pay for what is needed rather than fixed costs, and ability to scale costs when needed |
 
 ## Architecture Explanation
-This is a placeholder section where you can provide an explanation and reasoning for your architecture selection for both the Azure Web App and Azure Function.
+Brief explnataion and reasoning for architecture selection:
+Overall requirements and pain points: 
+* App not able to scale out
+* Notifications timeout
+* Current solution not cost-effective
+
+*PostGres*: single server, Basic tier, 1vCore, 5GB storage chosen as a baseline, cheapest option to reduce costs.
+
+*Service Bus Basic*:  as topics are not required in project, and message sizes not expected to exceed 256KB. Srvice bus also allows notifications to stay until handled by Function app.
+
+*Azure Function App Consumption plan*:  chosen as a pay-as=-you go is cheapest upfront, and allows growth to dedicated services as needed. Functions can also be chained, or scaled out down the line if needed. As Function App runtime is seperate from web application, timeouts should be reduced or elimniated, or at the very least not dependent on web app.
+
+*Azure Web App free F1* : chose as Python runs well on Linux, lowest upfront cost for development, and can scale to paid options as needed. Free tier also has scale out options to reduce load.
